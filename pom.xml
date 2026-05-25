@@ -12,6 +12,19 @@
     <name>FlossWare Build Tools</name>
     <description>Shared build configuration files (Checkstyle, PMD, SpotBugs) for FlossWare projects</description>
 
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <message>Automated Version Bump ${project.version} [ci skip]</message>
+    </properties>
+
+    <scm>
+        <connection>scm:git:https://github.com/FlossWare/build-tools.git</connection>
+        <developerConnection>scm:git:https://github.com/FlossWare/build-tools.git</developerConnection>
+        <url>https://github.com/FlossWare/build-tools</url>
+    </scm>
+
     <distributionManagement>
         <repository>
             <id>packagecloud-flossware</id>
@@ -29,6 +42,58 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.3.1</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.5.0</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.16.0</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>enforce-release-rules</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireReleaseDeps/>
+                                <requireReleaseVersion/>
+                                <evaluateBeanshell>
+                                    <condition>
+                                        String v = "${project.version}";
+                                        v.matches("^\\d+\\.\\d+$")
+                                    </condition>
+                                    <message>VERSION ERROR: Version must be X.Y format and NOT a SNAPSHOT.</message>
+                                </evaluateBeanshell>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-plugin</artifactId>
+                <version>2.0.1</version>
+                <configuration>
+                    <providerImplementations>
+                        <git>git</git>
+                    </providerImplementations>
+                    <tag>${project.version}</tag>
+                </configuration>
             </plugin>
         </plugins>
 
