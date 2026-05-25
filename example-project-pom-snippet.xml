@@ -1,0 +1,207 @@
+<!--
+    Copy this snippet into your project's pom.xml to enable FlossWare standards.
+
+    Key additions:
+    1. distributionManagement - PackageCloud.io publishing
+    2. build/plugins - Checkstyle, PMD, SpotBugs, version enforcement
+    3. build/extensions - PackageCloud.io wagon
+
+    Adjust failOnViolation to false during initial adoption if you have many existing violations.
+-->
+
+<!-- Add this to your POM root -->
+<distributionManagement>
+    <repository>
+        <id>packagecloud-flossware</id>
+        <url>packagecloud+https://packagecloud.io/flossware/releases</url>
+    </repository>
+    <snapshotRepository>
+        <id>packagecloud-flossware</id>
+        <url>packagecloud+https://packagecloud.io/flossware/snapshots</url>
+    </snapshotRepository>
+</distributionManagement>
+
+<build>
+    <plugins>
+        <!-- Checkstyle: Code Style Enforcement -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <version>3.3.1</version>
+            <dependencies>
+                <dependency>
+                    <groupId>org.flossware</groupId>
+                    <artifactId>flossware-build-tools</artifactId>
+                    <version>1.3</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.puppycrawl.tools</groupId>
+                    <artifactId>checkstyle</artifactId>
+                    <version>10.12.5</version>
+                </dependency>
+            </dependencies>
+            <configuration>
+                <configLocation>flossware-checkstyle.xml</configLocation>
+                <consoleOutput>true</consoleOutput>
+                <failsOnError>true</failsOnError>
+                <violationSeverity>warning</violationSeverity>
+            </configuration>
+            <executions>
+                <execution>
+                    <phase>validate</phase>
+                    <goals>
+                        <goal>check</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+
+        <!-- PMD: Code Quality Analysis -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-pmd-plugin</artifactId>
+            <version>3.21.2</version>
+            <dependencies>
+                <dependency>
+                    <groupId>org.flossware</groupId>
+                    <artifactId>flossware-build-tools</artifactId>
+                    <version>1.3</version>
+                </dependency>
+            </dependencies>
+            <configuration>
+                <rulesets>
+                    <ruleset>flossware-pmd-ruleset.xml</ruleset>
+                </rulesets>
+                <printFailingErrors>true</printFailingErrors>
+                <failOnViolation>true</failOnViolation>
+            </configuration>
+            <executions>
+                <execution>
+                    <phase>validate</phase>
+                    <goals>
+                        <goal>check</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+
+        <!-- SpotBugs: Bug Detection -->
+        <plugin>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-maven-plugin</artifactId>
+            <version>4.8.2.0</version>
+            <dependencies>
+                <dependency>
+                    <groupId>org.flossware</groupId>
+                    <artifactId>flossware-build-tools</artifactId>
+                    <version>1.3</version>
+                </dependency>
+            </dependencies>
+            <configuration>
+                <excludeFilterFile>flossware-spotbugs-exclude.xml</excludeFilterFile>
+                <effort>Max</effort>
+                <threshold>Low</threshold>
+                <failOnError>true</failOnError>
+            </configuration>
+            <executions>
+                <execution>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>check</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+
+        <!-- Enforce X.Y version format (no X.Y.Z) -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <version>3.4.1</version>
+            <executions>
+                <execution>
+                    <id>enforce-version-format</id>
+                    <goals>
+                        <goal>enforce</goal>
+                    </goals>
+                    <configuration>
+                        <rules>
+                            <requireProperty>
+                                <property>project.version</property>
+                                <regex>^\d+\.\d+$</regex>
+                                <regexMessage>Version must be in X.Y format (e.g., 1.0, 2.5), not X.Y.Z</regexMessage>
+                            </requireProperty>
+                        </rules>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+        <!-- JaCoCo: 100% Test Coverage Enforcement -->
+        <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.11</version>
+            <executions>
+                <execution>
+                    <id>prepare-agent</id>
+                    <goals>
+                        <goal>prepare-agent</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>report</id>
+                    <phase>test</phase>
+                    <goals>
+                        <goal>report</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>check</id>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>check</goal>
+                    </goals>
+                    <configuration>
+                        <rules>
+                            <rule>
+                                <element>BUNDLE</element>
+                                <limits>
+                                    <limit>
+                                        <counter>INSTRUCTION</counter>
+                                        <value>COVEREDRATIO</value>
+                                        <minimum>1.00</minimum>
+                                    </limit>
+                                    <limit>
+                                        <counter>BRANCH</counter>
+                                        <value>COVEREDRATIO</value>
+                                        <minimum>1.00</minimum>
+                                    </limit>
+                                    <limit>
+                                        <counter>LINE</counter>
+                                        <value>COVEREDRATIO</value>
+                                        <minimum>1.00</minimum>
+                                    </limit>
+                                    <limit>
+                                        <counter>CLASS</counter>
+                                        <value>MISSEDCOUNT</value>
+                                        <maximum>0</maximum>
+                                    </limit>
+                                </limits>
+                            </rule>
+                        </rules>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+
+    <!-- PackageCloud.io wagon extension for mvn deploy -->
+    <extensions>
+        <extension>
+            <groupId>io.packagecloud.maven.wagon</groupId>
+            <artifactId>maven-packagecloud-wagon</artifactId>
+            <version>0.0.6</version>
+        </extension>
+    </extensions>
+</build>

@@ -1,0 +1,78 @@
+<!--
+    Mockito Configuration - Fixes JDK Agent Warning
+
+    WARNING MESSAGE:
+    "This will no longer work in future releases of the JDK.
+     Please add Mockito as an agent to your build..."
+
+    SOLUTION 1: Use mockito-inline (RECOMMENDED - Easiest)
+    ========================================================
+    Replace mockito-core with mockito-inline in your dependencies.
+    This version has built-in support for mocking without needing the agent.
+
+    <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-inline</artifactId>
+        <version>5.2.0</version>
+        <scope>test</scope>
+    </dependency>
+
+    No Surefire configuration needed!
+
+
+    SOLUTION 2: Configure Mockito Agent (If you must use mockito-core)
+    ===================================================================
+    Add this to your <properties>:
+
+    <properties>
+        <mockito.version>5.11.0</mockito.version>
+    </properties>
+
+    Keep mockito-core dependency:
+
+    <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${mockito.version}</version>
+        <scope>test</scope>
+    </dependency>
+
+    Add Surefire plugin configuration:
+-->
+
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <version>3.2.5</version>
+    <configuration>
+        <argLine>
+            -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
+        </argLine>
+    </configuration>
+</plugin>
+
+<!--
+    SOLUTION 3: Use ByteBuddy agent explicitly (Advanced)
+    ======================================================
+    If you need finer control, you can use the ByteBuddy agent directly:
+
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
+        <dependencies>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+        </dependencies>
+        <configuration>
+            <argLine>
+                -javaagent:${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy.version}/byte-buddy-agent-${byte-buddy.version}.jar
+            </argLine>
+        </configuration>
+    </plugin>
+
+    RECOMMENDATION: Use Solution 1 (mockito-inline) - it's the simplest and most future-proof.
+-->

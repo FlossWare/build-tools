@@ -1,0 +1,65 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.flossware.FlossWareStandards
+displayName: FlossWare Build Standards
+description: Apply all FlossWare coding standards automatically
+recipeList:
+  - org.openrewrite.java.cleanup.RemoveUnusedImports
+  - org.openrewrite.java.cleanup.RemoveUnusedLocalVariables
+  - org.openrewrite.java.cleanup.UnnecessaryExplicitTypeArguments
+  - org.openrewrite.java.cleanup.SimplifyBooleanExpression
+  - org.openrewrite.java.cleanup.SimplifyBooleanReturn
+  - org.openrewrite.java.cleanup.AddOverrideAnnotation
+  - org.openrewrite.java.cleanup.StaticMethodNotFinal
+  - org.openrewrite.java.cleanup.EmptyBlock
+  - org.openrewrite.java.cleanup.EqualsAvoidsNull
+  - org.openrewrite.java.cleanup.ExplicitInitialization
+  - org.openrewrite.java.cleanup.FinalizePrivateFields
+  - org.openrewrite.java.cleanup.HideUtilityClassConstructor
+  - org.openrewrite.java.cleanup.MethodNameCasing
+  - org.openrewrite.java.cleanup.NoEmptyCollectionWithRawType
+  - org.openrewrite.java.cleanup.NoFinalizer
+  - org.openrewrite.java.cleanup.NoToStringOnStringType
+  - org.openrewrite.java.cleanup.NoValueOfOnStringType
+  - org.openrewrite.java.cleanup.PrimitiveWrapperClassConstructorToValueOf
+  - org.openrewrite.java.cleanup.RemoveRedundantTypeCast
+  - org.openrewrite.java.cleanup.RenamePrivateFieldsToCamelCase
+  - org.openrewrite.java.cleanup.SimplifyBooleanExpression
+  - org.openrewrite.java.cleanup.StringLiteralEquality
+  - org.openrewrite.java.cleanup.UnnecessaryParentheses
+  - org.openrewrite.java.cleanup.UseDiamondOperator
+  - org.openrewrite.java.format.AutoFormat
+  - org.openrewrite.java.format.EmptyNewlineAtEndOfFile
+  - org.openrewrite.java.format.NormalizeLineBreaks
+  - org.openrewrite.java.format.RemoveTrailingWhitespace
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.flossware.MethodChaining
+displayName: Prefer Method Chaining
+description: Inline single-use variables to create method chains
+recipeList:
+  - org.openrewrite.java.cleanup.RemoveUnusedLocalVariables
+  - org.openrewrite.java.cleanup.UnnecessaryExplicitTypeArguments
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.flossware.Imports
+displayName: Fix Imports
+description: Remove wildcard and unused imports
+recipeList:
+  - org.openrewrite.java.cleanup.RemoveUnusedImports
+  - org.openrewrite.java.cleanup.NoWildcardImports
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.flossware.Formatting
+displayName: Format Code
+description: Apply FlossWare code formatting standards
+recipeList:
+  - org.openrewrite.java.format.AutoFormat
+  - org.openrewrite.java.format.EmptyNewlineAtEndOfFile
+  - org.openrewrite.java.format.NormalizeLineBreaks
+  - org.openrewrite.java.format.RemoveTrailingWhitespace
+  - org.openrewrite.java.format.Spaces
+  - org.openrewrite.java.format.TabsAndIndents
