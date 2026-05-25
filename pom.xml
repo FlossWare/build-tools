@@ -13,8 +13,8 @@
     <description>Shared build configuration files (Checkstyle, PMD, SpotBugs) for FlossWare projects</description>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <message>Automated Version Bump ${project.version} [ci skip]</message>
     </properties>
