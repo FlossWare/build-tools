@@ -413,16 +413,29 @@ Each IDE can auto-add `final` modifiers, format code, and show coverage inline.
 
 ## Configuration Files
 
+### Code Quality
 - `flossware-checkstyle.xml` - Style rules (naming, formatting, NO wildcards, final enforcement)
 - `flossware-pmd-ruleset.xml` - Code quality rules
 - `flossware-spotbugs-exclude.xml` - Bug patterns to ignore
 - `.editorconfig` - IDE formatting preferences
+
+### Project Templates
 - `flossware-project-template.xml` - Complete project template with all standards (includes JaCoCo)
-- `example-project-pom-snippet.xml` - Quick copy-paste snippet (includes JaCoCo)
-- `mockito-agent-config.xml` - Mockito agent configuration options
+- `example-project-pom-snippet.xml` - Quick copy-paste snippet (strict 100% coverage)
+- **`jacoco-pragmatic-snippet.xml`** - **⭐ NEW: JaCoCo with sensible exclusions (pragmatic 100%)**
+- **`jacoco-pragmatic-excludes.xml`** - **⭐ NEW: Reference list of standard exclusions**
+
+### Scripts
 - `bump-version.sh` - Version increment script
 - `distribute-editorconfig.sh` - Copy .editorconfig to all projects
 - `fix-mockito-warning.sh` - Bulk fix Mockito agent warnings
+- `rollout-standards.sh` - Apply standards to projects (supports `--pragmatic-coverage`)
+- `auto-refactor.sh` - Automated code refactoring
+- `verify-all-projects.sh` - Check compliance across all projects
+- `create-new-project.sh` - Generate new projects with standards
+
+### Other
+- `mockito-agent-config.xml` - Mockito agent configuration options
 
 ## Documentation
 
@@ -430,6 +443,7 @@ Each IDE can auto-add `final` modifiers, format code, and show coverage inline.
 - `QUICK-START.md` - Quick reference
 - `CHANGELOG.md` - Version history
 - **`AUTOMATED-REFACTORING.md`** - **⭐ Automated code transformations (NEW!)**
+- **`COVERAGE-RECOMMENDATIONS.md`** - **⭐ Project-specific coverage guidelines (NEW!)**
 - `ROLLOUT-GUIDE.md` - Organization rollout guide
 - `METHOD-CHAINING.md` - Method chaining style guide (prefer chaining over temporaries)
 - `FINAL-VARIABLES.md` - Final parameters standard (parameters only, not locals)

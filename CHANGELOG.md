@@ -2,6 +2,31 @@
 
 ## Version 1.4 (Unreleased)
 
+### Added - Pragmatic Coverage (Major Feature) ⭐
+- **Added** [COVERAGE-RECOMMENDATIONS.md](COVERAGE-RECOMMENDATIONS.md) - Project-specific coverage guidelines
+  - Analyzes all FlossWare projects
+  - Recommends Strict 100%, Pragmatic 100%, or 90-95% per project
+  - Explains when to use each coverage approach
+  - Provides specific commands for each project
+- **Added** `jacoco-pragmatic-snippet.xml` - JaCoCo configuration with sensible exclusions
+  - Maintains 100% coverage on business logic
+  - Excludes main methods, utility constructors, pure DTOs
+  - Pre-configured for CLI applications and abstraction libraries
+- **Added** `jacoco-pragmatic-excludes.xml` - Reference list of standard exclusions
+  - Application entry points (*Application, Main, *CLI)
+  - Utility class constructors (*Utils, *Helper, *Constants)
+  - Pure data classes (DTOs, Records, Entities)
+  - Generated code (builders, Lombok)
+- **Added** `--pragmatic-coverage` flag to `rollout-standards.sh`
+  - Applies pragmatic coverage configuration automatically
+  - Alternative to `--skip-coverage-enforcement` for gradual adoption
+  - Maintains high standards while acknowledging practical limitations
+- **Updated** [TEST-COVERAGE.md](TEST-COVERAGE.md) - Added pragmatic coverage guidance
+  - Coverage philosophy section (Strict vs Pragmatic vs Gradual)
+  - When to use exclusions vs full 100%
+  - Safe exclusion patterns
+  - Examples for CLI applications
+
 ### Added - Community & Licensing
 - **Added** [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) - Contributor Covenant Code of Conduct v2.1
   - Establishes community guidelines for contributions

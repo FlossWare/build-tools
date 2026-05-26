@@ -2,6 +2,18 @@
 
 FlossWare enforces 100% test coverage using JaCoCo to ensure all code is tested.
 
+## Coverage Philosophy
+
+FlossWare offers **three coverage approaches** depending on your project needs:
+
+| Approach | When to Use | Coverage | Exclusions |
+|----------|-------------|----------|------------|
+| **Strict 100%** | Core libraries, critical business logic | 100% | None |
+| **Pragmatic 100%** | CLI apps, libraries with entry points | 100% | Main methods, utils, DTOs |
+| **Gradual Adoption** | Legacy projects, brownfield code | 80% → 100% | Temporary reduced threshold |
+
+**Recommendation:** Start with **Pragmatic 100%** for most projects. It maintains high standards while acknowledging that `main()` methods and utility class constructors don't need unit tests.
+
 ## What's Enforced
 
 JaCoCo checks four coverage metrics, all must be 100%:
@@ -11,7 +23,85 @@ JaCoCo checks four coverage metrics, all must be 100%:
 3. **Line Coverage** - Every line of code executed  
 4. **Class Coverage** - Every class has at least one test
 
+## Pragmatic Coverage (Recommended)
+
+### What Gets Excluded
+
+Use **jacoco-pragmatic-snippet.xml** for sensible exclusions while maintaining 100% coverage on business logic:
+
+```bash
+# Apply pragmatic coverage to all projects
+./rollout-standards.sh --all --pragmatic-coverage
+
+# Or to a specific project
+./rollout-standards.sh --project ../jcommons --pragmatic-coverage
+```
+
+**Automatically excludes:**
+
+1. **Application Entry Points** - No testable logic
+   - `*Application.class`, `Main.class`, `*CLI.class`
+   - These delegate to frameworks (Picocli, Spring, etc.)
+
+2. **Utility Class Constructors** - Private constructors that only throw
+   - `*Utils.class`, `*Helper.class`, `*Constants.class`
+   - Example: `private Utils() { throw new UnsupportedOperationException(); }`
+
+3. **Pure Data Classes** - No logic, only getters/setters
+   - `*DTO.class`, `*Record.class`, `*Entity.class`
+   - Must have ZERO validation or business logic
+
+4. **Generated Code** - Not written by developers
+   - `generated/**`, `*Builder.class`
+   - Lombok, MapStruct, code generators
+
+**Still enforces 100% on:**
+- ✅ All business logic
+- ✅ Services, repositories, validators
+- ✅ Algorithms and calculations
+- ✅ Error handling and exceptions
+- ✅ Public APIs and interfaces
+
+### When to Use Pragmatic Coverage
+
+**✅ Use pragmatic coverage for:**
+- CLI applications with `main()` methods
+- Libraries with utility classes
+- Projects with pure DTOs/POJOs
+- Applications with framework entry points
+
+**❌ Don't use pragmatic coverage for:**
+- Core business logic libraries (use strict 100%)
+- Security-critical code (test everything!)
+- When DTOs have validation logic (test the validation!)
+
+### Example: CLI Application
+
+```java
+// This would be excluded (entry point, no logic)
+public class JNexus {
+    public static void main(final String[] args) {
+        CommandLine.execute(new NexusCommand(), args);
+    }
+}
+
+// This must be tested (business logic)
+public class NexusService {
+    public List<Component> filterComponents(
+        final List<Component> components,
+        final SearchCriteria criteria
+    ) {
+        // Business logic - MUST be tested!
+        return components.stream()
+            .filter(c -> matchesCriteria(c, criteria))
+            .collect(Collectors.toList());
+    }
+}
+```
+
 ## Configuration
+
+### Strict 100% Configuration
 
 The JaCoCo plugin in your `pom.xml` enforces these limits:
 
@@ -316,6 +406,17 @@ private Utils() {
 
 ### 3. JaCoCo Exclusions
 
+**Option A: Use Pragmatic Coverage (Recommended)**
+
+```bash
+# Apply pragmatic coverage configuration
+./rollout-standards.sh --all --pragmatic-coverage
+```
+
+This uses `jacoco-pragmatic-snippet.xml` which excludes main methods, utils, and DTOs.
+
+**Option B: Manual Exclusions**
+
 Add to `pom.xml`:
 
 ```xml
@@ -326,12 +427,28 @@ Add to `pom.xml`:
         <excludes>
             <exclude>**/*Application.class</exclude>
             <exclude>**/Main.class</exclude>
+            <exclude>**/*Utils.class</exclude>
         </excludes>
     </configuration>
 </plugin>
 ```
 
-**Use exclusions sparingly!** Default FlossWare standard is 100% with no exclusions.
+**Important Exclusion Guidelines:**
+
+✅ **SAFE to exclude:**
+- `main()` methods that only delegate to frameworks
+- Private constructors in utility classes: `private Utils() { throw ... }`
+- Pure data classes with ONLY getters/setters (no logic)
+- Generated code (Lombok, builders)
+
+❌ **NEVER exclude:**
+- Business logic (services, validators, algorithms)
+- Public APIs and methods
+- DTOs with validation logic
+- Error handling code
+- Security-critical code
+
+**When in doubt:** Test it! If you're questioning whether to exclude code, write the test.
 
 ## Gradual Adoption
 

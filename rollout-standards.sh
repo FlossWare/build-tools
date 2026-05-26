@@ -7,6 +7,7 @@
 #   ./rollout-standards.sh --project ../jcommons    # Apply to specific project
 #   ./rollout-standards.sh --all --dry-run          # Preview changes only
 #   ./rollout-standards.sh --all --skip-coverage-enforcement  # Add JaCoCo but set to 0.80
+#   ./rollout-standards.sh --all --pragmatic-coverage        # Use 100% with sensible exclusions
 #
 
 set -e
@@ -15,6 +16,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PARENT_DIR="$(dirname "$SCRIPT_DIR")"
 DRY_RUN=false
 SKIP_COVERAGE=false
+PRAGMATIC_COVERAGE=false
 TARGET_PROJECT=""
 APPLY_ALL=false
 
@@ -37,9 +39,13 @@ while [[ $# -gt 0 ]]; do
             SKIP_COVERAGE=true
             shift
             ;;
+        --pragmatic-coverage)
+            PRAGMATIC_COVERAGE=true
+            shift
+            ;;
         *)
             echo "Unknown option: $1"
-            echo "Usage: $0 [--all | --project <path>] [--dry-run] [--skip-coverage-enforcement]"
+            echo "Usage: $0 [--all | --project <path>] [--dry-run] [--skip-coverage-enforcement | --pragmatic-coverage]"
             exit 1
             ;;
     esac
@@ -53,15 +59,23 @@ if [[ "$APPLY_ALL" == false && -z "$TARGET_PROJECT" ]]; then
     echo "  $0 --project ../jcommons          # Apply to specific project"
     echo "  $0 --all --dry-run                # Preview only"
     echo "  $0 --all --skip-coverage-enforcement  # Start with 80% coverage"
+    echo "  $0 --all --pragmatic-coverage     # Use 100% with sensible exclusions"
+    exit 1
+fi
+
+# Check for conflicting options
+if [[ "$SKIP_COVERAGE" == true && "$PRAGMATIC_COVERAGE" == true ]]; then
+    echo "Error: Cannot use both --skip-coverage-enforcement and --pragmatic-coverage"
     exit 1
 fi
 
 echo "========================================"
 echo "FlossWare Build Standards Rollout"
 echo "========================================"
-echo "Version: 1.3"
+echo "Version: 1.4"
 echo "Dry Run: $DRY_RUN"
 echo "Skip Coverage: $SKIP_COVERAGE"
+echo "Pragmatic Coverage: $PRAGMATIC_COVERAGE"
 echo
 
 apply_standards() {
@@ -101,8 +115,14 @@ apply_standards() {
         echo "   ✅ Copied .editorconfig"
     fi
 
-    # Read the snippet to insert
-    local snippet_file="$SCRIPT_DIR/example-project-pom-snippet.xml"
+    # Determine which snippet to use
+    local snippet_file
+    if [[ "$PRAGMATIC_COVERAGE" == true ]]; then
+        snippet_file="$SCRIPT_DIR/jacoco-pragmatic-snippet.xml"
+        echo "   📋 Using pragmatic coverage configuration (100% with sensible exclusions)"
+    else
+        snippet_file="$SCRIPT_DIR/example-project-pom-snippet.xml"
+    fi
 
     # Check if </build> exists
     if grep -q "</build>" "$project_dir/pom.xml"; then
@@ -117,9 +137,14 @@ apply_standards() {
         echo "   💡 Insert before </project> tag"
     fi
 
-    # Adjust coverage if requested
+    # Show coverage mode
     if [[ "$SKIP_COVERAGE" == true ]]; then
-        echo "   ⚠️  Coverage enforcement set to 80% (use --skip-coverage-enforcement)"
+        echo "   ⚠️  Coverage enforcement set to 80% (gradual adoption mode)"
+    elif [[ "$PRAGMATIC_COVERAGE" == true ]]; then
+        echo "   ✅ Pragmatic coverage: 100% with main/utils/DTOs excluded"
+        echo "   📄 Exclusions reference: $SCRIPT_DIR/jacoco-pragmatic-excludes.xml"
+    else
+        echo "   ✅ Strict coverage: 100% with no exclusions"
     fi
 
     echo "   ✅ DONE - Review changes and run: cd $project_dir && mvn clean verify"
@@ -163,14 +188,24 @@ else
     echo
     echo "Next steps for each project:"
     echo "  1. Review pom.xml changes"
-    echo "  2. Manually merge build plugins (see example-project-pom-snippet.xml)"
+    if [[ "$PRAGMATIC_COVERAGE" == true ]]; then
+        echo "  2. Manually merge build plugins (see jacoco-pragmatic-snippet.xml)"
+    else
+        echo "  2. Manually merge build plugins (see example-project-pom-snippet.xml)"
+    fi
     echo "  3. Fix violations: mvn clean verify"
-    echo "  4. Add final to parameters (use IDE)"
-    echo "  5. Fix imports (use IDE)"
-    echo "  6. Improve test coverage to 100%"
-    echo "  7. Commit: git commit -am 'Apply FlossWare standards v1.3'"
+    echo "  4. Add final to parameters (use IDE or auto-refactor.sh)"
+    echo "  5. Fix imports (use IDE or auto-refactor.sh)"
+    if [[ "$SKIP_COVERAGE" == true ]]; then
+        echo "  6. Gradually improve test coverage: 80% → 100%"
+    elif [[ "$PRAGMATIC_COVERAGE" == true ]]; then
+        echo "  6. Test coverage: 100% (main/utils/DTOs excluded)"
+    else
+        echo "  6. Achieve 100% test coverage (strict mode)"
+    fi
+    echo "  7. Commit: git commit -am 'Apply FlossWare standards v1.4'"
     echo
-    echo "Need help? See: ROLLOUT-GUIDE.md"
+    echo "Need help? See: ROLLOUT-GUIDE.md and TEST-COVERAGE.md"
 fi
 echo
 echo "Backups saved as: pom.xml.backup"
