@@ -1,6 +1,10 @@
 # FlossWare Build Tools
 
-Shared build configuration files for enforcing code standards across FlossWare Java projects.
+Universal build configuration and quality standards for all FlossWare projects.
+
+**Supported Languages**: Java (Maven), Shell/Bash, C/C++, Go, Python  
+**Maven Artifact**: `org.flossware:jbuild-tools` (unchanged for backward compatibility)  
+**Repository**: https://github.com/FlossWare/build-tools
 
 ## What's Included
 
@@ -31,7 +35,7 @@ Shared build configuration files for enforcing code standards across FlossWare J
 
 ```bash
 # Auto-refactor a project (inline variables, fix imports, format code)
-cd flossware-build-tools
+cd build-tools
 ./auto-refactor.sh ../jcommons
 
 # Preview changes first
@@ -92,7 +96,7 @@ Add these plugins to your project's `pom.xml`:
             <dependencies>
                 <dependency>
                     <groupId>org.flossware</groupId>
-                    <artifactId>flossware-build-tools</artifactId>
+                    <artifactId>build-tools</artifactId>
                     <version>1.0</version>
                 </dependency>
                 <dependency>
@@ -125,7 +129,7 @@ Add these plugins to your project's `pom.xml`:
             <dependencies>
                 <dependency>
                     <groupId>org.flossware</groupId>
-                    <artifactId>flossware-build-tools</artifactId>
+                    <artifactId>build-tools</artifactId>
                     <version>1.0</version>
                 </dependency>
             </dependencies>
@@ -154,7 +158,7 @@ Add these plugins to your project's `pom.xml`:
             <dependencies>
                 <dependency>
                     <groupId>org.flossware</groupId>
-                    <artifactId>flossware-build-tools</artifactId>
+                    <artifactId>build-tools</artifactId>
                     <version>1.0</version>
                 </dependency>
             </dependencies>
@@ -182,7 +186,7 @@ Add these plugins to your project's `pom.xml`:
 Copy the `.editorconfig` file to the root of each project:
 
 ```bash
-cp flossware-build-tools/.editorconfig /path/to/your-project/
+cp build-tools/.editorconfig /path/to/your-project/
 ```
 
 ## Usage
@@ -347,7 +351,7 @@ See [TEST-COVERAGE.md](TEST-COVERAGE.md) for:
 **Bulk Fix Across All Projects:**
 
 ```bash
-./flossware-build-tools/fix-mockito-warning.sh
+./build-tools/fix-mockito-warning.sh
 ```
 
 See [MOCKITO-FIX.md](MOCKITO-FIX.md) for detailed instructions and alternatives.
@@ -360,14 +364,14 @@ Use the provided script to increment versions:
 
 ```bash
 # Bump minor version (1.0 -> 1.1)
-./flossware-build-tools/bump-version.sh minor path/to/project
+./build-tools/bump-version.sh minor path/to/project
 
 # Bump major version (1.5 -> 2.0)
-./flossware-build-tools/bump-version.sh major path/to/project
+./build-tools/bump-version.sh major path/to/project
 
 # From within a project directory
 cd jcommons
-../flossware-build-tools/bump-version.sh minor
+../build-tools/bump-version.sh minor
 ```
 
 The script automatically:

@@ -8,7 +8,7 @@ This document provides specific test coverage recommendations for each FlossWare
 |----------------|----------|-----------|
 | **Strict 100%** | jcommons, jcollections, jencrypt, jsecurity, jclassloader, jremote, jthreadpool, jresource-monitor, jeventbus, jfs-watcher | Core libraries, critical business logic, reusable components |
 | **Pragmatic 100%** | jnexus, jcurses, jcloudstorage, jcontainer, jfiletransfer, jmessaging, jvcs | CLI apps, abstraction libraries with entry points |
-| **90-95%** | jplatform, jbuild-tools, netbeans-plugins | Frameworks, build tools, IDE plugins |
+| **90-95%** | jplatform, build-tools, netbeans-plugins | Frameworks, build tools, IDE plugins |
 
 ---
 
@@ -303,7 +303,7 @@ This document provides specific test coverage recommendations for each FlossWare
 
 ---
 
-### jbuild-tools
+### build-tools
 **Type:** Build configuration tools  
 **Coverage:** **90-95%**  
 **Rationale:** Configuration files and documentation, no Java source.
@@ -356,7 +356,7 @@ This document provides specific test coverage recommendations for each FlossWare
 | jmessaging | 4 | Pragmatic 100% | `--project ../jmessaging --pragmatic-coverage` |
 | jvcs | 2 | Pragmatic 100% | `--project ../jvcs --pragmatic-coverage` |
 | jplatform | 0 (TBD) | 90-95% | `--project ../jplatform --skip-coverage-enforcement` |
-| jbuild-tools | 0 | N/A | Config files only |
+| build-tools | 0 | N/A | Config files only |
 | netbeans-plugins | 0 (TBD) | 80-90% | `--project ../netbeans-plugins --skip-coverage-enforcement` |
 
 ---
@@ -409,7 +409,7 @@ For existing projects without coverage:
 
 3. **Apply standards:**
    ```bash
-   cd jbuild-tools
+   cd build-tools
    ./rollout-standards.sh --project ../yourproject --pragmatic-coverage
    ```
 
