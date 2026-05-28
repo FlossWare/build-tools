@@ -29,7 +29,36 @@ Universal build configuration and quality standards for all FlossWare projects.
 
 ## Quick Start - Apply to Your Projects
 
-### Option 1: Automated Refactoring (Easiest) ⭐ NEW
+### Option 1: Automated Quality Monitoring (GitHub Actions) ⭐ NEW
+
+**Automatically monitor code quality and create GitHub issues when checks fail:**
+
+```bash
+# Distribute quality gate workflow to all projects
+cd build-tools
+./distribute-quality-workflow.sh --all
+
+# Then commit in each project
+cd ../jcommons
+git add .github/
+git commit -m "Add automated quality gate workflow"
+git push
+```
+
+**What gets automated:**
+- ✅ Auto-creates GitHub issues for:
+  - Code coverage drops
+  - SpotBugs violations
+  - PMD violations  
+  - Checkstyle errors
+  - Security vulnerabilities (OWASP)
+- ✅ PR comments with quality metrics
+- ✅ Daily security scans
+- ✅ Prevents merging failing PRs
+
+See [AUTOMATED-QUALITY-MONITORING.md](AUTOMATED-QUALITY-MONITORING.md) for complete guide.
+
+### Option 2: Automated Refactoring (Easiest)
 
 **Automatically converts your code to FlossWare standards:**
 
